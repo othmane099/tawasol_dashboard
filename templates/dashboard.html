@@ -1,0 +1,403 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    {% tailwind_css %}
+<style>
+    .claim-toggle {
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .claim-message {
+        max-width: 200px; /* Adjust as needed */
+        display: inline-block;
+        vertical-align: middle;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: max-width 0.3s ease-in-out;
+    }
+
+    .claim-toggle.expanded .claim-message {
+        max-width: none;
+        white-space: normal; /* Allow text to wrap vertically */
+        display: block; /* Display the message as a block element */
+    }
+</style>
+</head>
+<body class="">
+<div class="min-h-screen w-screen dark:bg-slate-950 bg-gray-100">
+    <button id="captureBtn">Take Screenshot</button>
+
+    <div class="flex items-center justify-center">
+        <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" value="" class="sr-only peer" id="dark-mode-toggle">
+            <span class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></span>
+            <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Dark mode</span>
+        </label>
+    </div>
+    <div class="container mx-auto py-10">
+
+        <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Activated Users -->
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md lg:order-1 md:order-1 sm:order-1">
+                <h2 class="card-title">Activated Users</h2>
+                <div class="flex justify-between">
+                    <div>
+                        <p class="big-text ">
+                            {{ ctx.activated_employees }}
+                            <span class="slash-percentage">/</span><span
+                                class="total-number">{{ ctx.total_employees }}</span>
+                        </p>
+                    </div>
+                    <div>
+                        <p class="big-text">{{ ctx.activated_employees_percentage }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activated Units -->
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md lg:order-2 md:order-2 sm:order-2">
+                <h2 class="card-title">Activated Units</h2>
+                <div class="flex justify-between">
+                    <div>
+                        <p class="big-text">{{ ctx.activated_units }}
+                            <span class="slash-percentage">/</span><span
+                                    class="total-number">{{ ctx.total_units }}</span>
+                        </p>
+                    </div>
+                    <div>
+                        <p class="big-text">{{ ctx.activated_units_percentage }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Response Time -->
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md lg:order-3 md:order-3 sm:order-3">
+                <h2 class="card-title">Response Time</h2>
+                <div class="flex justify-around">
+                    <p class="big-text">
+                        {{ ctx.mean_response_time.days }}<span class="secondary-text">&nbsp days</span>
+                    </p>
+                    <p class="big-text">
+                        {{ ctx.mean_response_time.hours }}<span class="secondary-text">&nbsp hours</span>
+                    </p>
+                    <p class="big-text">
+                        {{ ctx.mean_response_time.minutes }}<span class="secondary-text">&nbsp minutes</span>
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Solving Time -->
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md lg:order-6 md:order-4 sm:order-4">
+                <h2 class="card-title">Solving Time</h2>
+                <div class="flex justify-around">
+                    <p class="big-text">
+                        {{ ctx.mean_ending_time.days }}<span class="secondary-text">&nbsp days</span>
+                    </p>
+                    <p class="big-text">
+                        {{ ctx.mean_ending_time.hours }}<span class="secondary-text">&nbsp hours</span>
+                    </p>
+                    <p class="big-text">
+                        {{ ctx.mean_ending_time.minutes }}<span class="secondary-text">&nbsp minutes</span>
+                    </p>
+                </div>
+            </div>
+
+
+            <!-- Most Occurred Category -->
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md lg:order-4 md:order-5 sm:order-5">
+
+                <h2 class="card-title">Most Occurred Category</h2>
+
+                <div class="flex justify-between">
+                    <div>
+                        <p class="big-text">{{ ctx.most_opened_claim_category }}</p>
+
+                    </div>
+                    <div>
+                        <p class="big-text">{{ ctx.most_opened_claim_category_times }}<span
+                                class="secondary-text">&nbsp cases</span></p>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+        <!-- Last 5 Not Closed Claims -->
+    <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md lg:order-7 md:order-7 sm:order-6">
+        <h2 class="card-title">Last 5 Not Closed Claims</h2>
+        <ul>
+            {% for obj in ctx.last_five_unclosed_claims %}
+                <li class="claims-text">
+                    <span class="claim-toggle cursor-pointer">
+                        Claim #{{ obj.id }}: <span class="claim-message truncate">{{ obj.message }}</span> - <span
+                            style="color: {% if obj.status == 'pending' %}#FF8C00;
+                                {% elif obj.status == 'proceed' %}color: #1E90FF;
+                                {% else %}#DC143C;{% endif %}">{{ obj.status | capfirst }}</span>
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+            <!-- Most Solved Category -->
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md lg:order-5 md:order-6 sm:order-7">
+                <h2 class="card-title">Most Solved Category</h2>
+
+                <div class="flex justify-between">
+                    <div>
+                        <p class="big-text">{{ ctx.most_closed_claim_category }}</p>
+
+                    </div>
+                    <div>
+                        <p class="big-text">{{ ctx.most_closed_claim_category_times }}<span
+                                class="secondary-text">&nbsp cases</span></p>
+
+
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- Last 5 Closed Claims -->
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md lg:order-8 md:order-8 sm:order-8">
+                <h2 class="card-title">Last 5 Closed Claims</h2>
+                <ul>
+                    {% for obj in ctx.last_five_closed_claims %}
+                        <li class="claims-text">
+                            <span class="claim-toggle cursor-pointer"> Claim #{{ obj.id }}: <span class="claim-message truncate">{{ obj.message }}</span> - <span class="text-green-500">Closed</span> </span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md lg:order-9 md:order-9 sm:order-9">
+                <h2 class="card-title">Best Performance</h2>
+                <p class="dark:text-white text-xl mb-3">Solved claims in last {{ ctx.performance.hours }} hours</p>
+
+                <div class="flex justify-between">
+                    <div>
+                        <p class="big-text">{{ ctx.performance.counted_closed_claims }}
+                            <span class="slash-percentage">/</span><span
+                                    class="total-number">{{ ctx.performance.counted_published_claims }}</span>
+                    </div>
+                    <div>
+                        <p class="big-text">{{ ctx.performance.percentage }}</p>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mt-4">
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md">
+                <h2 class="card-title">Claims published per month</h2>
+                <canvas id="bar_chart" class="w-full h-32 sm:h-64"></canvas>
+
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md">
+                <h2 class="card-title">Claims Evolution</h2>
+                <canvas id="line_chart" class="w-full h-32 sm:h-64"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{# Screen shot #}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script type="text/javascript">
+
+    const downPdf = document.getElementById("captureBtn");
+    downPdf.onclick = generatePDF
+
+    function generatePDF() {
+
+        // Choose the element id which you want to export.
+        const element = document.body;
+
+        const opt = {
+            margin: 0.5,
+            filename: 'dashboard.pdf',
+            image: {type: 'jpeg', quality: 1},
+            html2canvas: {scale: 1},
+            jsPDF: {
+                unit: 'px',
+                format: [element.offsetWidth, element.offsetHeight],
+                orientation: 'landscape',
+                precision: '12'
+            }
+        };
+
+        // choose the element and pass it to html2pdf() function and call the save() on it to save as pdf.
+        html2pdf().set(opt).from(element).save();
+    }
+</script>
+{# Expand and truncate claim messages #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const claimToggles = document.querySelectorAll('.claim-toggle');
+
+        claimToggles.forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const claimMessage = this.querySelector('.claim-message');
+                claimMessage.classList.toggle('truncate');
+                this.classList.toggle('expanded'); // Toggle 'expanded' class on the .claim-toggle element
+            });
+        });
+    });
+</script>
+{# Dark mode #}
+<script>
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+    darkModeToggle.addEventListener('change', function () {
+        if (this.checked) {
+            document.body.classList.add('dark');
+            my_line_chart.options.scales.x.ticks.color = 'white';
+            my_line_chart.options.scales.y.ticks.color = 'white';
+            my_line_chart.update();
+            my_bar_chart.options.scales.x.ticks.color = 'white';
+            my_bar_chart.options.scales.y.ticks.color = 'white';
+            my_bar_chart.update();
+        } else {
+            document.body.classList.remove('dark');
+            my_line_chart.options.scales.x.ticks.color = 'black';
+            my_line_chart.options.scales.y.ticks.color = 'black';
+            my_line_chart.update();
+            my_bar_chart.options.scales.x.ticks.color = 'black';
+            my_bar_chart.options.scales.y.ticks.color = 'black';
+            my_bar_chart.update();
+        }
+    });
+</script>
+{# Charts #}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+
+
+    const bar_chart = JSON.parse('{{ bar_chart|safe }}');
+    const line_chart = JSON.parse('{{ line_chart|safe }}');
+    const ctx = document.getElementById('bar_chart').getContext('2d');
+    const ctx2 = document.getElementById('line_chart').getContext('2d');
+    metadata1 = {
+        type: 'bar',
+        data: {
+            labels: bar_chart.labels,
+            datasets: [{
+                data: bar_chart.data,
+                backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                borderColor: 'rgba(59, 130, 246, 1)',
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: '#d1d5db',
+                    },
+                    ticks: {
+                        font: {
+                            size: 16,
+                            weight: 'bold',
+                        },
+                        color: '#000',
+                    },
+                    // Use labels option to display month names on the Y-axis
+                    labels: bar_chart.data,
+                },
+                x: {
+                    grid: {
+                        display: false,
+                    },
+                    ticks: {
+                        font: {
+                            size: 14,
+                            weight: 'bold',
+                        },
+                        color: '#000',
+                    },
+                    labels: bar_chart.labels,
+
+                },
+            },
+        },
+    }
+    const my_line_chart = new Chart(ctx, metadata1);
+    metadata2 = {
+        type: 'line',
+        data: {
+            labels: line_chart.labels,
+            datasets: [{
+                data: line_chart.data,
+                backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                borderColor: 'rgba(59, 130, 246, 1)',
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: '#d1d5db',
+                    },
+                    ticks: {
+                        font: {
+                            size: 16,
+                            weight: 'bold',
+                        },
+                        color: '#000',
+                    },
+                    // Use labels option to display month names on the Y-axis
+                    labels: line_chart.data,
+                },
+                x: {
+                    grid: {
+                        display: false,
+                    },
+                    ticks: {
+                        font: {
+                            size: 14,
+                            weight: 'bold',
+                        },
+                        color: '#000',
+                    },
+                    labels: line_chart.labels,
+
+                },
+            },
+        },
+    }
+    const my_bar_chart = new Chart(ctx2, metadata2);
+</script>
+
+
+</body>
+</html>
+

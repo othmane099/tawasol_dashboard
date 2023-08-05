@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer components {
+  .card-title {
+    @apply text-lg dark:text-white font-semibold mb-5;
+  }
+
+  .big-text {
+    @apply dark:text-white text-5xl font-bold;
+  }
+
+  .secondary-text {
+    @apply text-gray-500 text-xl;
+  }
+
+  .claims-text {
+    @apply border-b border-gray-300 py-2 dark:text-white;
+  }
+
+  .slash-percentage {
+    @apply text-lg text-blue-500;
+  }
+
+  .total-number {
+    @apply text-blue-500 text-2xl ps-1;
+  }
+}

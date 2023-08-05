@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Beautiful Template</title>
+    <!-- Add Tailwind CSS CDN link below -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto py-8">
+        <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
+            <h1 class="text-2xl font-semibold mb-4">Dashboard Configuration</h1>
+
+            <form method="post" action="/config/">
+              {% csrf_token %}
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="id_total_employees_number">Total Employees</label>
+                    <input type="number" id="id_total_employees_number" name="total_employees_number" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:border-indigo-500"
+                            value="{{ form.total_employees_number.value }}">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="id_total_unities_number">Total Units</label>
+                    <input type="number" id="id_total_unities_number" name="total_unities_number" value="{{ form.total_unities_number.value }}"
+                           class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="id_performance_hours_offset">Performance Hours Offset</label>
+                    <input type="number" id="id_performance_hours_offset" name="performance_hours_offset"  value="{{ form.performance_hours_offset.value }}"
+                           class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <button type="submit" class="w-full bg-indigo-500 text-white py-2 px-4 rounded-lg hover:bg-indigo-600 transition-colors duration-300">Save Configuration</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
