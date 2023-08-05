@@ -139,7 +139,7 @@
                     <span class="claim-toggle cursor-pointer">
                         Claim #{{ obj.id }}: <span class="claim-message truncate">{{ obj.message }}</span> - <span
                             style="color: {% if obj.status == 'pending' %}#FF8C00;
-                                {% elif obj.status == 'proceed' %}color: #1E90FF;
+                                {% elif obj.status == 'proceed' %}#1E90FF;
                                 {% else %}#DC143C;{% endif %}">{{ obj.status | capfirst }}</span>
                     </span>
                 </li>
