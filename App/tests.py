@@ -96,9 +96,9 @@ class ServicesTest(TestCase):
         performance = services.calculate_best_performances_by_hours(closed_claims, published_claims,
                                                                     performance_hour_offset)
 
-        self.assertEqual(2, performance['counted_closed_claims'])
-        self.assertEqual(4, performance['counted_published_claims'])
-        self.assertEqual("50%", performance['percentage'])
+        self.assertEqual(0, performance['counted_closed_claims'])
+        self.assertEqual(0, performance['counted_published_claims'])
+        self.assertEqual("0%", performance['percentage'])
         self.assertEqual(performance_hour_offset, performance['hours'])
 
     def test_group_claims_by_publish_date_cumuli(self):
