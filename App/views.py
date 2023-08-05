@@ -2,7 +2,7 @@ import json
 
 from django.shortcuts import render, redirect
 
-from App.services import dashboard_data, save_or_update_configuration, init_configuration_form
+from App.services import dashboard_data, save_or_update_configuration, init_configuration_form, dashboard_fake_data
 
 
 def dashboard_view(request):

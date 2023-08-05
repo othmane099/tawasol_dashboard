@@ -384,8 +384,12 @@ def calculate_best_performances_by_hours(closed_claims, published_claims, perfor
             if is_datetime_between(datetime.fromisoformat(claim["publish_date"][:-1]), new_datetime, current_datetime):
                 count_published_claims += 1
 
-        # Calculate the percentage of closed claims out of published claims.
-        count_closed_claims_per = (count_closed_claims / count_published_claims) * 100
+        # To avoid division by zero when there was no published date in specific period
+        if count_published_claims == 0:
+            count_closed_claims_per = 0
+        else:
+            # Calculate the percentage of closed claims out of published claims.
+            count_closed_claims_per = (count_closed_claims / count_published_claims) * 100
 
         # Return the results in a dictionary.
         return {
