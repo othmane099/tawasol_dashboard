@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.10]  # You can add more versions if needed
+        python-version: ['3.10']  # You can add more versions if needed
 
     steps:
       - name: Set up Python
