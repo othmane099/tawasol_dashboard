@@ -21,7 +21,7 @@ def dashboard_view(request):
     If the data is not available, it redirects the user to the 'config_form' view to provide the necessary configuration data.
     """
     # Generate the dashboard data using the 'dashboard_data()' function.
-    data = dashboard_fake_data()
+    data = dashboard_data()
 
     if data:
         # If data is available, render the 'dashboard.html' template with the dashboard data and JSON-encoded chart data.

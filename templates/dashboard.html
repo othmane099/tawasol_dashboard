@@ -33,7 +33,7 @@
 <div class="min-h-screen w-screen dark:bg-slate-950 bg-gray-100">
     <button id="captureBtn">Take Screenshot</button>
 
-    <div class="flex items-center justify-center">
+    <div class="flex items-center justify-center" id="dark-mode-div">
         <label class="relative inline-flex items-center cursor-pointer">
             <input type="checkbox" value="" class="sr-only peer" id="dark-mode-toggle">
             <span class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></span>
@@ -214,36 +214,6 @@
 
 </div>
 
-{# Screen shot #}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-<script type="text/javascript">
-
-    const downPdf = document.getElementById("captureBtn");
-    downPdf.onclick = generatePDF
-
-    function generatePDF() {
-
-        // Choose the element id which you want to export.
-        const element = document.body;
-
-        const opt = {
-            margin: 0.5,
-            filename: 'dashboard.pdf',
-            image: {type: 'jpeg', quality: 1},
-            html2canvas: {scale: 1},
-            jsPDF: {
-                unit: 'px',
-                format: [element.offsetWidth, element.offsetHeight],
-                orientation: 'landscape',
-                precision: '12'
-            }
-        };
-
-        // choose the element and pass it to html2pdf() function and call the save() on it to save as pdf.
-        html2pdf().set(opt).from(element).save();
-    }
-</script>
 {# Expand and truncate claim messages #}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -284,8 +254,6 @@
 {# Charts #}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-
-
 
     const bar_chart = JSON.parse('{{ bar_chart|safe }}');
     const line_chart = JSON.parse('{{ line_chart|safe }}');
@@ -395,6 +363,47 @@
         },
     }
     const my_bar_chart = new Chart(ctx2, metadata2);
+</script>
+{# Screen shot #}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script type="text/javascript">
+
+    const downPdf = document.getElementById("captureBtn");
+    downPdf.onclick = generatePDF
+
+    function generatePDF() {
+
+        tmpDarkModeToggle = document.getElementById('dark-mode-div');
+        tmpDarkModeToggle.classList.add("hidden")
+        downPdf.classList.add("hidden");
+
+        // Choose the element id which you want to export.
+        const element = document.body;
+
+        const opt = {
+            margin: 0.5,
+            filename: 'dashboard.pdf',
+            image: {type: 'jpeg', quality: 1},
+            html2canvas: {scale: 1},
+            jsPDF: {
+                unit: 'px',
+                format: [element.offsetWidth, element.offsetHeight],
+                orientation: 'landscape',
+                precision: '12'
+            }
+        };
+
+        // choose the element and pass it to html2pdf() function and call the save() on it to save as pdf.
+        html2pdf().set(opt).from(element).save();
+
+         setTimeout(showMessage, 3000);
+    }
+
+    function showHiddenElements() {
+        document.getElementById('dark-mode-div').classList.remove('hidden');
+        document.getElementById("captureBtn").classList.remove('hidden')
+    }
 </script>
 
 
